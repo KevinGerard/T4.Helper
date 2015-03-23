@@ -1,4 +1,4 @@
-﻿<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Core" #>
 <#@ assembly name="System.Data" #>
 <#@ assembly name="System.Data.Entity" #>
 <#@ assembly name="System.Xml" #>
@@ -310,6 +310,8 @@ public class TemplateFileManager
 			{
 				VSHelper.SetPropertyValue(item, "ItemType", file.FileProperties.BuildActionString);
 			}
+
+			VSHelper.SetPropertyValue(item, "CopyToOutputDirectory", file.FileProperties.CopyToOutputDirectory);			
 		}
 	}
 
@@ -861,6 +863,7 @@ public class VSHelper
 	public static void SetPropertyValue(EnvDTE.ProjectItem item, string propertyName, object value)
 	{
 		EnvDTE.Property property = item.Properties.Item(propertyName);
+		
 		if (property == null)
 		{
 			throw new ArgumentException(String.Format("The property {0} was not found.", propertyName));
@@ -1122,6 +1125,13 @@ public class BuildAction
 	public const string EntityDeploy = "EntityDeploy";
 }
 
+public enum CopyToOutputDirectory
+{
+	DoNotCopy = 0,
+	Always = 1,
+	IfNewer = 2,
+}
+
 public sealed class FileProperties
 {
 	public FileProperties ()
@@ -1131,6 +1141,7 @@ public sealed class FileProperties
 
 	public string CustomTool { get; set; }
 	public string BuildAction { get; set; }
+	public CopyToOutputDirectory CopyToOutputDirectory { get; set; }
 	public Dictionary<string, string> TemplateParameter { get; set; }
 
 	internal string BuildActionString
